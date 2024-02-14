@@ -62,7 +62,7 @@ app.get("/getVegetable", async (req, res) => {
 });
 
 //delete item of vegetable
-app.delete("/deleteItem/:vegetableId", async (req, res) => {
+app.delete("/deleteVegetable/:vegetableId", async (req, res) => {
   const id = req.params.vegetableId;
 
   try {
@@ -130,7 +130,7 @@ app.get("/getFruits", async (req, res) => {
 });
 
 //delete item of fruits
-app.delete("/deleteItem/:fruitsId", async (req, res) => {
+app.delete("/deleteFruits/:fruitsId", async (req, res) => {
   const id = req.params.fruitsId;
 
   try {
@@ -198,7 +198,7 @@ app.get("/getOffers", async (req, res) => {
 });
 
 //delete item of offers
-app.delete("/deleteItem/:offerId", async (req, res) => {
+app.delete("/deleteOffers/:offerId", async (req, res) => {
   const id = req.params.offerId;
 
   try {
