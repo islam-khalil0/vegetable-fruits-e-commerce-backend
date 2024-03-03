@@ -7,6 +7,20 @@ const Vegetable = require("./models/Vegetable");
 const Fruits = require("./models/Fruits");
 const Offers = require("./models/Offers");
 
+//upload images
+const multer = require("multer");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
+
 const app = express();
 app.use(express.json());
 app.use((req, res, next) => {
@@ -34,14 +48,18 @@ mongoose
   });
 
 //add new vegetable
-app.post("/addVegetable", async (req, res) => {
+app.post("/addVegetable", upload.single("file"), async (req, res) => {
   const name = req.body.name;
   const price = req.body.price;
+  const imageName = req.file.originalname;
+  const imagePath = req.file.path;
 
   const addVegetable = new Vegetable();
 
   addVegetable.name = name;
   addVegetable.price = price;
+  addVegetable.imageName = imageName;
+  addVegetable.imagePath = imagePath;
 
   try {
     await addVegetable.save();
@@ -55,7 +73,14 @@ app.post("/addVegetable", async (req, res) => {
 app.get("/getVegetable", async (req, res) => {
   try {
     const displayVegetable = await Vegetable.find();
-    res.json(displayVegetable);
+    const displayVegetableImg = await Vegetable.find({}, "filename path");
+
+    const combinedData = {
+      vegetables: displayVegetable,
+      vegImages: displayVegetableImg,
+    };
+
+    res.json(combinedData);
   } catch (error) {
     res.send("error in get vegetable :", error);
   }
