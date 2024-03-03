@@ -72,15 +72,12 @@ app.post("/addVegetable", upload.single("file"), async (req, res) => {
 //get vegetable
 app.get("/getVegetable", async (req, res) => {
   try {
-    const displayVegetable = await Vegetable.find();
-    const displayVegetableImg = await Vegetable.find({}, "filename path");
+    const displayVegetable = await Vegetable.find(
+      {},
+      "name price imageName imagePath"
+    );
 
-    const combinedData = {
-      vegetables: displayVegetable,
-      vegImages: displayVegetableImg,
-    };
-
-    res.json(combinedData);
+    res.json(displayVegetable);
   } catch (error) {
     res.send("error in get vegetable :", error);
   }
