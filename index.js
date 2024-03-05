@@ -58,7 +58,14 @@ cloudinary.config({
 });
 
 // Multer storage configuration
-const storage = multer.memoryStorage();
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "uploads"));
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
 const upload = multer({ storage: storage });
 
 //add new vegetable
@@ -69,7 +76,7 @@ app.post("/addVegetable", upload.single("file"), async (req, res) => {
   const addVegetable = new Vegetable();
 
   try {
-    const result = await cloudinary.uploader.upload(req.file.buffer, {
+    const result = await cloudinary.uploader.upload(req.file.path, {
       folder: "uploads", // Specify your Cloudinary folder
       resource_type: "image",
     });
