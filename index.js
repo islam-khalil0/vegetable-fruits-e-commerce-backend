@@ -12,6 +12,9 @@ const cloudinary = require("cloudinary").v2;
 const path = require("path");
 const multer = require("multer");
 
+// Import the cors middleware
+const cors = require("cors");
+ 
 const app = express();
 app.use(cors());
 app.use(express.json());
