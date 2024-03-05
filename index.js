@@ -8,18 +8,9 @@ const Fruits = require("./models/Fruits");
 const Offers = require("./models/Offers");
 
 //upload images
+const cloudinary = require("cloudinary").v2;
+const path = require("path");
 const multer = require("multer");
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./public");
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  },
-});
-
-const upload = multer({ storage: storage });
 
 const app = express();
 app.use(express.json());
@@ -47,21 +38,35 @@ mongoose
     console.log("error with connected db ", e);
   });
 
+// Cloudinary configuration
+cloudinary.config({
+  cloud_name: "dgx6qjzs5",
+  api_key: "286735357397959",
+  api_secret: "1OJBZXTImY9qswNxp9UC0rq9_XY",
+});
+
+// Multer storage configuration
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
 //add new vegetable
 app.post("/addVegetable", upload.single("file"), async (req, res) => {
   const name = req.body.name;
   const price = req.body.price;
-  const imageName = req.file.originalname;
-  const imagePath = req.file.path;
 
   const addVegetable = new Vegetable();
 
-  addVegetable.name = name;
-  addVegetable.price = price;
-  addVegetable.imageName = imageName;
-  addVegetable.imagePath = imagePath;
-
   try {
+    const result = await cloudinary.uploader.upload(req.file.buffer, {
+      folder: "uploads", // Specify your Cloudinary folder
+      resource_type: "image",
+    });
+
+    addVegetable.name = name;
+    addVegetable.price = price;
+    addVegetable.imageName = result.original_filename;
+    addVegetable.imagePath = result.secure_url;
+
     await addVegetable.save();
     res.send("add new item successfully");
   } catch (error) {
