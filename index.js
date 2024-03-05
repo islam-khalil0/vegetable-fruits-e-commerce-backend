@@ -14,10 +14,10 @@ const multer = require("multer");
 
 // Import the cors middleware
 const cors = require("cors");
- 
+
 const app = express();
-app.use(cors());
 app.use(express.json());
+app.use(cors());
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
@@ -27,6 +27,14 @@ app.use((req, res, next) => {
   );
   next();
 });
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true,
+  })
+);
 
 mongoose
   .connect(
