@@ -149,15 +149,23 @@ app.put("/updateVegetable/:vegetableId", async (req, res) => {
 });
 
 //add fruits
-app.post("/addFruits", async (req, res) => {
+app.post("/addFruits", upload.single("file"), async (req, res) => {
   const name = req.body.name;
   const price = req.body.price;
 
   const addFruits = new Fruits();
-  addFruits.name = name;
-  addFruits.price = price;
 
   try {
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "uploads", // Specify your Cloudinary folder
+      resource_type: "image",
+    });
+
+    addFruits.name = name;
+    addFruits.price = price;
+    addFruits.imageName = result.original_filename;
+    addFruits.imagePath = result.secure_url;
+
     await addFruits.save();
     res.send("add new item successfully");
   } catch (error) {
@@ -168,7 +176,10 @@ app.post("/addFruits", async (req, res) => {
 //get fruits
 app.get("/getFruits", async (req, res) => {
   try {
-    const displayFruits = await Fruits.find();
+    const displayFruits = await Fruits.find(
+      {},
+      "name price imageName imagePath"
+    );
     res.json(displayFruits);
   } catch (error) {
     res.send("error in get fruits : ", error);
@@ -217,15 +228,23 @@ app.put("/updateFruits/:fruitsId", async (req, res) => {
 });
 
 //add offers
-app.post("/addOffers", async (req, res) => {
+app.post("/addOffers", upload.single("file"), async (req, res) => {
   const name = req.body.name;
   const price = req.body.price;
 
   const addOffers = new Offers();
-  addOffers.name = name;
-  addOffers.price = price;
 
   try {
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "uploads", // Specify your Cloudinary folder
+      resource_type: "image",
+    });
+
+    addOffers.name = name;
+    addOffers.price = price;
+    addOffers.imageName = result.original_filename;
+    addOffers.imagePath = result.secure_url;
+
     await addOffers.save();
     res.send("add new item successfully");
   } catch (error) {
@@ -236,7 +255,10 @@ app.post("/addOffers", async (req, res) => {
 //get offers
 app.get("/getOffers", async (req, res) => {
   try {
-    const displayOffers = await Offers.find();
+    const displayOffers = await Offers.find(
+      {},
+      "name price imageName imagePath"
+    );
     res.json(displayOffers);
   } catch (error) {
     res.send("error in get offers : ", error);
