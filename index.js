@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const Vegetable = require("./models/Vegetable");
 const Fruits = require("./models/Fruits");
 const Offers = require("./models/Offers");
+const Banner = require("./models/Banner");
 
 //upload images
 const cloudinary = require("cloudinary").v2;
@@ -303,5 +304,35 @@ app.put("/updateOffer/:offerId", async (req, res) => {
     }
   } catch (error) {
     console.log("Error updating offer:", error);
+  }
+});
+
+//add Banner images
+app.post("/addBannerImages", upload.single("file"), async (req, res) => {
+  const addBannerImages = new Banner();
+
+  try {
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "uploads", // Specify your Cloudinary folder
+      resource_type: "image",
+    });
+
+    addBannerImages.imageName = result.original_filename;
+    addBannerImages.imagePath = result.secure_url;
+
+    await addBannerImages.save();
+    res.send("add new item successfully");
+  } catch (error) {
+    res.send("error in time of save new item", error);
+  }
+});
+
+//get banner images
+app.get("/getBannerImages", async (req, res) => {
+  try {
+    const displayBannerImages = await Banner.find({}, "imageName imagePath");
+    res.json(displayBannerImages);
+  } catch (error) {
+    res.send("error in get fruits : ", error);
   }
 });
