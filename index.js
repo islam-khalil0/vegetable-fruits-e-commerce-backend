@@ -19,6 +19,15 @@ const cors = require("cors");
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+app.use(
+  cors({
+    origin: "https://fakhaani.vercel.app",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true,
+  })
+);
+
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
@@ -28,14 +37,6 @@ app.use((req, res, next) => {
   );
   next();
 });
-
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true,
-  })
-);
 
 mongoose
   .connect(
