@@ -337,3 +337,15 @@ app.get("/getBannerImages", async (req, res) => {
     res.send("error in get fruits : ", error);
   }
 });
+
+//delete image of banner
+app.delete("/deleteImage/:imageId", async (req, res) => {
+  const id = req.params.imageId;
+
+  try {
+    await Banner.findByIdAndDelete(id);
+    res.send("deleted image successfully");
+  } catch (error) {
+    res.send("error in delete image : ", error);
+  }
+});
